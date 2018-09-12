@@ -34,10 +34,10 @@ public class Filter_adapter extends RecyclerView.Adapter<Filter_holder> {
     public void onBindViewHolder(Filter_holder holder, int position) {
 
         if(position ==0){
-            holder.setFilter(img1,"Natural");
+            holder.setFilter(img1,"Normal");
         }
         else if(position ==1){
-            holder.setFilter(img2,"Lovely");
+            holder.setFilter(img2,"Natural");
         }
 
         else if(position ==2){
@@ -49,7 +49,7 @@ public class Filter_adapter extends RecyclerView.Adapter<Filter_holder> {
         }
 
         else if(position ==4){
-            holder.setFilter(img5,"Crema");
+            holder.setFilter(img5,"PurPlus");
         }
 
 

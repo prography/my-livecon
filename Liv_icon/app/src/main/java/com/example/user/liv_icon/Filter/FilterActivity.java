@@ -1,11 +1,8 @@
 package com.example.user.liv_icon.Filter;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,8 +21,6 @@ import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubfilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ToneCurveSubfilter;
 
-import java.util.ArrayList;
-
 public class FilterActivity extends AppCompatActivity {
     static
     {
@@ -37,6 +32,7 @@ public class FilterActivity extends AppCompatActivity {
     Filter_adapter filter_adapter;
     public static Bitmap img1,img2,img3,img4,img5;
     SharedPreferences mPref;
+    String img;
     Bitmap decodedBitmap;
 
 
@@ -48,12 +44,7 @@ public class FilterActivity extends AppCompatActivity {
         recyclerView = (RecyclerView)findViewById(R.id.list);
         filter_adapter = new Filter_adapter(this);
 
-        mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String base_img = mPref.getString("img", "0");
-
-        byte[] decodedByteArray = Base64.decode(base_img, Base64.NO_WRAP);
-        decodedBitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
-        decodedBitmap =decodedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        setImage();
 
         imageView.setImageBitmap(decodedBitmap);
 
@@ -68,49 +59,33 @@ public class FilterActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 if(position ==0){
-                    ToneCurveSubfilter(decodedBitmap);
+                    setImage();
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==1){
-                    ColorOverlaySubfilter(decodedBitmap);
+                    setImage();
+                    ToneCurveSubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==2){
+                    setImage();
                     ContrastSubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==3){
+                    setImage();
                     BrightnessSubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==4){
-                    SaturationSubfilter(decodedBitmap);
+                    setImage();
+                    ColorOverlaySubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
             }
 
             @Override
             public void onLongItemClick(View view, int position) {
-                if(position ==0){
-                    ToneCurveSubfilter(decodedBitmap);
-                    imageView.setImageBitmap(decodedBitmap);
-                }
-                else if(position ==1){
-                    ColorOverlaySubfilter(decodedBitmap);
-                    imageView.setImageBitmap(decodedBitmap);
-                }
-                else if(position ==2){
-                    ContrastSubfilter(decodedBitmap);
-                    imageView.setImageBitmap(decodedBitmap);
-                }
-                else if(position ==3){
-                    BrightnessSubfilter(decodedBitmap);
-                    imageView.setImageBitmap(decodedBitmap);
-                }
-                else if(position ==4){
-                    SaturationSubfilter(decodedBitmap);
-                    imageView.setImageBitmap(decodedBitmap);
-                }
             }
         }));
 
@@ -129,15 +104,23 @@ public class FilterActivity extends AppCompatActivity {
         img5=  BitmapFactory.decodeResource(getResources(), R.drawable.dokyo);
         img5 =img5.copy(Bitmap.Config.ARGB_8888, true);
 
-        ToneCurveSubfilter(img1);
-        ColorOverlaySubfilter(img2);
+        ToneCurveSubfilter(img2);
         ContrastSubfilter(img3);
         BrightnessSubfilter(img4);
-        SaturationSubfilter(img5);
+        ColorOverlaySubfilter(img5);
+
+
     }
 
 
+    public void setImage(){
+        mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String base_img = mPref.getString("img", "0");
 
+        byte[] decodedByteArray = Base64.decode(base_img, Base64.NO_WRAP);
+        decodedBitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
+        decodedBitmap =decodedBitmap.copy(Bitmap.Config.ARGB_8888, true);
+    }
 
     public void ToneCurveSubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
@@ -149,32 +132,30 @@ public class FilterActivity extends AppCompatActivity {
         rgbKnots[2] = new Point(255, 255);
 
         myFilter.addSubFilter(new ToneCurveSubfilter(rgbKnots, null, null, null));
-        img1 = myFilter.processFilter(bitmap);
+        img2 = myFilter.processFilter(bitmap);
+
     }
 
     public void ColorOverlaySubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
+        myFilter.addSubFilter(new ColorOverlaySubfilter(100, .5f, .2f, .5f));
+        img5 = myFilter.processFilter(bitmap);
 
-        myFilter.addSubFilter(new ColorOverlaySubfilter(100, .3f, .4f, .0f));
-        img2 = myFilter.processFilter(bitmap);
     }
 
     public void ContrastSubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new ContrastSubfilter(2.2f));
         img3 = myFilter.processFilter(bitmap);
+
     }
 
     public void BrightnessSubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
-        myFilter.addSubFilter(new BrightnessSubfilter(60));
+        myFilter.addSubFilter(new ColorOverlaySubfilter(100, .3f, .6f, .6f));
         img4 = myFilter.processFilter(bitmap);
+
     }
 
-    public void SaturationSubfilter(Bitmap bitmap){
-        Filter myFilter = new Filter();
-        myFilter.addSubFilter(new SaturationSubfilter(1.3f));
-        img5 = myFilter.processFilter(bitmap);
-    }
 
 }
