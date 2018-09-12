@@ -17,4 +17,5 @@
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         android:src="@drawable/dokyo" />
+
 </LinearLayout>

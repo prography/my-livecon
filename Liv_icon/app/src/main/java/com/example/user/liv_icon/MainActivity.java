@@ -2,18 +2,25 @@ package com.example.user.liv_icon;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.example.user.liv_icon.Filter.FilterActivity;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,16 +29,20 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
     public static final int PICK_CAMERA = 101;
 
+    String base_img;
     public static final int PICK_ALBUM = 102;
-
+    Bitmap bitmap = null;
     private Uri mImageCaptureUri;
     private ImageButton inputImg;
     private boolean isSelectImage = false;
+    SharedPreferences mPref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         inputImg = (ImageButton)findViewById(R.id.inputImg);
+
+        mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         inputImg.setOnClickListener(this);
     }
@@ -73,10 +84,20 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         startActivityForResult(intent, PICK_ALBUM);
     }
 
+    public String getBase64String(Bitmap bitmap)
+    {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+        byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+        return Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+    }
 
     private void bitmapImage(Uri uri){
 
-        Bitmap bitmap = null;
+
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         try {
@@ -98,7 +119,16 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             case PICK_CAMERA:
 
                 bitmapImage(mImageCaptureUri);
+                base_img = getBase64String(bitmap);
 
+                SharedPreferences.Editor editor = mPref.edit();
+
+                editor.putString("img", base_img);
+
+                editor.commit();
+
+                Intent intent = new Intent(MainActivity.this, FilterActivity.class);
+                startActivity(intent);
                 break;
 
             case PICK_ALBUM:
@@ -108,6 +138,16 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                 }else{
                     Uri mImageCaptureUri = data.getData();
                     bitmapImage(mImageCaptureUri);
+                    base_img = getBase64String(bitmap);
+
+                    SharedPreferences.Editor editor1 = mPref.edit();
+
+                    editor1.putString("img", base_img);
+
+                    editor1.commit();
+
+                    Intent intent1 = new Intent(MainActivity.this, FilterActivity.class);
+                    startActivity(intent1);
 
                 }
                 break;
@@ -116,34 +156,43 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     }
 
 
-    public void onClick(View v){
-        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                doTakePhotoAction();
-            }
-        };
+    public void onClick(View v) {
 
-        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                doTakeAlbumAction();
-            }
-        };
+        switch (v.getId()) {
 
-        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
+            case R.id.inputImg:
 
-        new AlertDialog.Builder(this)
-                .setTitle("업로드할 이미지 선택")
-                .setPositiveButton("앨범선택",albumListener)
-                .setNeutralButton("사진촬영",cameraListener)
-                .setNegativeButton("취소",cancelListener)
-                .show();
+                { DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            doTakePhotoAction();
+                        }
+                    };
+
+                    DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            doTakeAlbumAction();
+                        }
+                    };
+
+                    DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    };
+
+                    new AlertDialog.Builder(this)
+                            .setTitle("업로드할 이미지 선택")
+                            .setPositiveButton("앨범선택", albumListener)
+                            .setNeutralButton("사진촬영", cameraListener)
+                            .setNegativeButton("취소", cancelListener)
+                            .show();
+                }
+                break;
+
+        }
     }
 
 
