@@ -7,6 +7,11 @@ import torchvision.transforms as transforms
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+"""
+OSError: cannot identify image file './data\\train/B\\watercolor278.jpg'
+
+"""
+
 class ImageDataset(Dataset):
     def __init__(self, dataroot, transform=None, unaligned=False, mode='train'):
         self.transform = transform
