@@ -25,7 +25,7 @@ class Trainer(object):
         self.dataloader = dataloader
 
         self.starting_epoch = config.starting_epoch
-        self.n_epochs = config.n_epochs
+        self.n_epochs = config.num_epochs
         self.lr = config.lr
         self.decay_epoch = config.decay_epoch
         self.log_interval = config.log_interval
@@ -209,22 +209,25 @@ class Trainer(object):
 
                 if (step+1) % self.log_interval == 0:
                     end_time = time.time()
-                    print("[%d/%d] [%d/%d] time:%f loss_G:%.3f\tloss_G_identity:%.3f\tloss_G_GAN:%.3f\tloss_G_Cycle:%.3f\n"
-                          "loss_D_A:%.3f\tloss_D_B:%.3f\t"
+                    print("[%d/%d] [%d/%d] time:%f loss_G:%.3f loss_D_A:%.3f loss_D_B:%.3f"
                           % (epoch+1, self.n_epochs, step+1, len(self.dataloader), end_time-start_time,
-                             loss_G, loss_identity_A+loss_identity_B, loss_GAN_A2B+loss_GAN_B2A, loss_cycle_ABA+loss_cycle_BAB,
-                             loss_D_A, loss_D_B))
-                    print("=========================================================================================")
+                             loss_G, loss_D_A, loss_D_B))
+
+                    vis.plot("loss_G", np.mean(avg_loss_G))
+                    vis.plot("loss_D", np.mean(avg_loss_D))
+                    vis.plot("loss_G_GAN", np.mean(avg_loss_G_GAN))
+                    vis.plot("loss_G_Cycle", np.mean(avg_loss_G_cycle))
+                    vis.plot("loss_G_identity", np.mean(avg_loss_G_identity))
+
+                    avg_loss_G.clear()
+                    avg_loss_D.clear()
+                    avg_loss_G_GAN.clear()
+                    avg_loss_G_cycle.clear()
+                    avg_loss_G_identity.clear()
 
             lr_scheduler_G.step()
             lr_scheduler_D_A.step()
             lr_scheduler_D_B.step()
-
-            vis.plot("loss_G", np.mean(avg_loss_G))
-            vis.plot("loss_D", np.mean(avg_loss_D))
-            vis.plot("loss_G_GAN", np.mean(avg_loss_G_GAN))
-            vis.plot("loss_G_Cycle", np.mean(avg_loss_G_cycle))
-            vis.plot("loss_G_identity", np.mean(avg_loss_G_identity))
 
             if (epoch+1) % self.sample_interval == 0:
                 images = {"real_A": real_A, "real_B": real_B, "fake_A": fake_A, "fake_B": fake_B}
