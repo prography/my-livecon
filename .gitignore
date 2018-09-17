@@ -3,3 +3,4 @@
 *.iml
 
 /character_generator/data
+/character_generator/samples/*.pth

@@ -27,6 +27,7 @@ class ImageDataset(Dataset):
         
         if self.unaligned:
             item_B = Image.open(self.files_B[random.randint(0, len(self.files_B)-1)])
+
         else:
             item_B = Image.open(self.files_B[idx % len(self.files_B)])
 

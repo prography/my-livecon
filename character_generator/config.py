@@ -3,7 +3,7 @@ import argparse
 parser = argparse.ArgumentParser()
 
 # data processing hyper-parameters
-parser.add_argument('--dataroot', type=str, default='./data', help='root directory of the dataset')
+parser.add_argument('--dataroot', type=str, default='./datasets/horse2zebra', help='root directory of the dataset')
 parser.add_argument('--batch_size', type=int, default=1, help='size of the batches')
 parser.add_argument('--num_workers', type=int, default=0, help='number of cpu threads to use during batch generation')
 parser.add_argument('--unaligned', type=bool, default=True, help='whether dataset A-B matches')
