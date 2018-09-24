@@ -1,35 +1,40 @@
 from __future__ import print_function
 import random
-import os
-
-import torch.nn.parallel
+import torch
 import torch.backends.cudnn as cudnn
-cudnn.benchmark = True
-cudnn.fastest = True
-
-from trainer import Trainer
-from config import get_config
+import os
 from dataloader import get_loader
+from config import get_config
+from trainer import Trainer
 
 def main(config):
-    if config.sample_folder is None:
-        config.sample_folder = 'samples'
-    os.system('mkdir {0}'.format(config.sample_folder))
+    if not os.path.exists('./samples'):
+        os.makedirs('./samples')
+    if config.outf is None:
+        config.outf = 'samples/%s'%(config.dataset)
+    if not os.path.exists(config.outf):
+        os.makedirs(config.outf)
+        print("Directory",config.outf,"has created")
+    else:
+        print("Directory",config.outf,"already exsits")
 
     config.manual_seed = random.randint(1, 10000)
     print("Random Seed: ", config.manual_seed)
-
     random.seed(config.manual_seed)
     torch.manual_seed(config.manual_seed)
-    torch.cuda.manual_seed_all(config.manual_seed)
+
+    if config.cuda:
+        torch.cuda.manual_seed_all(config.manual_seed)
 
     cudnn.benchmark = True
 
-    dataloader = get_loader(config)
+    if torch.cuda.is_available() and not config.cuda:
+        print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
-    print("Prepare dataloader complete!!!")
+    data_lodaer = get_loader(config.dataroot, config.batch_size, config.image_size, config.split_ratio,
+                            num_workers=int(config.workers))
 
-    trainer = Trainer(config, dataloader)
+    trainer = Trainer(config, data_lodaer)
     trainer.train()
 
 if __name__ == "__main__":

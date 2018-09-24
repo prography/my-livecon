@@ -1,51 +1,119 @@
-import glob, random, os
-
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
+import os, glob
+from tqdm import tqdm
+from PIL import Image
+import torch.utils.data
+import numpy as np
+import torchvision.datasets as dset
 import torchvision.transforms as transforms
 
-from PIL import Image, ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-"""
-OSError: cannot identify image file './data\\train/B\\watercolor278.jpg'
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, root, image_size, data_type):
+        self.root = root
+        if not os.path.exists(self.root):
+            raise Exception("[!] {} not exists.".format(root))
 
-"""
+        self.name = os.path.basename(root)
 
-class ImageDataset(Dataset):
-    def __init__(self, dataroot, transform=None, unaligned=False, mode='train'):
-        self.transform = transform
-        self.unaligned = unaligned
+        self.paths = glob.glob(os.path.join(self.root, '{}/*'.format(data_type)))
+        if len(self.paths) == 0:
+            raise Exception("No images are found in {}".format(self.root))
 
-        self.files_A = sorted(glob.glob(os.path.join(dataroot, '%s/A' % mode) + '/*.*'))
-        print(self.files_A)
-        self.files_B = sorted(glob.glob(os.path.join(dataroot, '%s/B' % mode) + '/*.*'))
-        print(self.files_B)
+        self.shape = list(Image.open(self.paths[0]).size) + [3]
 
-    def __getitem__(self, idx):
-        item_A = Image.open(self.files_A[idx % len(self.files_A)])
-        
-        if self.unaligned:
-            item_B = Image.open(self.files_B[random.randint(0, len(self.files_B)-1)])
+        self.transform = transforms.Compose([
+            transforms.Resize(image_size),
+            transforms.CenterCrop(image_size),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+        ])
 
-        else:
-            item_B = Image.open(self.files_B[idx % len(self.files_B)])
-
-        return {'A': self.transform(item_A), 'B':self.transform(item_B)}
+    def __getitem__(self, index):
+        image = Image.open(self.paths[index]).convert('RGB')
+        return self.transform(image)
 
     def __len__(self):
-        return max(len(self.files_A), len(self.files_B))
+        return len(self.paths)
 
-def get_loader(config):
-    transform = transforms.Compose([
-        transforms.Resize(int(config.image_size * 1.12), Image.BICUBIC),
-        transforms.RandomCrop(config.image_size),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+def checkAB(root):
+    pathlist = os.listdir(root)
+    if "A" in pathlist and "B" in pathlist:
+        len_A = len(os.listdir(os.path.join(root, "A")))
+        len_B = len(os.listdir(os.path.join(root, "B")))
+    else:
+        raise Exception("No dataset in path!")
 
-    dataset = ImageDataset(config.dataroot, transform=transform, unaligned=config.unaligned)
-    dataloader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True, num_workers=config.num_workers)
+    if len_A != len_B:
+        raise Exception("Sizes of A B dataset are not same!")
 
-    print(len(dataloader))
+    train_root = os.path.join(root, "train")
+    test_root = os.path.join(root, "test")
+
+    type_list = [train_root,os.path.join(train_root,"A"),os.path.join(train_root,"B"),
+                 test_root, os.path.join(test_root,"A"),os.path.join(test_root,"B")]
+    for p in type_list:
+        if not os.path.exists(p):
+            os.system("mkdir %s" % p)
+            print("Creating path",p)
+
+    trainA, trainB = os.path.exists(os.path.join(train_root,"A")), os.path.exists(os.path.join(train_root,"B"))
+    testA, testB = os.path.exists(os.path.join(test_root,"A")), os.path.exists(os.path.join(test_root,"B"))
+
+    return trainA and trainB and testA and testB
+
+def train_test_split(root, split_ratio):
+    paths_A = glob.glob(os.path.join(root, 'A/*'))
+    paths_B = glob.glob(os.path.join(root, 'B/*'))
+
+    num_train = int(len(paths_A) * (1-split_ratio))
+
+    np.random.shuffle(paths_A)
+    np.random.shuffle(paths_B)
+
+    print("Start splitting...")
+    for i in tqdm(range(len(paths_A))):
+        a, b = paths_A[i], paths_B[i]
+        if i <= num_train:
+            os.system("cp %s %s/train/A/%s" % (a,root,a.split("/")[-1]))
+            os.system("cp %s %s/train/B/%s" % (b,root,b.split("/")[-1]))
+        else:
+            os.system("cp %s %s/test/A/%s" % (a,root,a.split("/")[-1]))
+            os.system("cp %s %s/test/B/%s" % (b,root,b.split("/")[-1]))
+
+    print("Finished splitting!")
+
+def get_loader(root, batch_size, image_size, split_ratio, num_workers=2, shuffle=True):
+    train_root = os.path.join(root, "train")
+    test_root = os.path.join(root, "test")
+
+    if not checkAB(root):
+        raise Exception("Incorrect directory settings!")
+
+    len_train_A = len(glob.glob(os.path.join(train_root, 'A/*')))
+    len_train_B = len(glob.glob(os.path.join(train_root, 'B/*')))
+
+
+    if len_train_A and len_train_B:
+        pass
+    else:
+        train_test_split(root, split_ratio)
+
+    trainA_dataset, trainB_dataset = \
+        Dataset(train_root, image_size, "A"), \
+        Dataset(train_root, image_size, "B")
+
+    trainA_loader = torch.utils.data.DataLoader(dataset=trainA_dataset,
+                                                batch_size=batch_size,
+                                                shuffle=True,
+                                                num_workers=num_workers)
+    trainB_loader = torch.utils.data.DataLoader(dataset=trainB_dataset,
+                                                batch_size=batch_size,
+                                                shuffle=True,
+                                                num_workers=num_workers)
+
+    trainA_loader.shape = trainA_dataset.shape
+    trainB_loader.shape = trainB_dataset.shape
+
+
+    dataloader = [trainA_loader, trainB_loader]
     return dataloader
