@@ -3,7 +3,6 @@ from tqdm import tqdm
 from PIL import Image
 import torch.utils.data
 import numpy as np
-import torchvision.datasets as dset
 import torchvision.transforms as transforms
 
 
@@ -82,9 +81,8 @@ def train_test_split(root, split_ratio):
 
     print("Finished splitting!")
 
-def get_loader(root, batch_size, image_size, split_ratio, num_workers=2, shuffle=True):
+def get_loader(root, batch_size, image_size, split_ratio, num_workers=1):
     train_root = os.path.join(root, "train")
-    test_root = os.path.join(root, "test")
 
     if not checkAB(root):
         raise Exception("Incorrect directory settings!")

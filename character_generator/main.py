@@ -8,15 +8,27 @@ from config import get_config
 from trainer import Trainer
 
 def main(config):
+    # sample outfolder
     if not os.path.exists('./samples'):
         os.makedirs('./samples')
-    if config.outf is None:
-        config.outf = 'samples/%s'%(config.dataset)
-    if not os.path.exists(config.outf):
-        os.makedirs(config.outf)
-        print("Directory",config.outf,"has created")
+    if config.sample_folder is None:
+        config.sample_folder = 'samples/%s'%(config.dataset)
+    if not os.path.exists(config.sample_folder):
+        os.makedirs(config.sample_folder)
+        print("Directory",config.sample_folder,"has created")
     else:
-        print("Directory",config.outf,"already exsits")
+        print("Directory",config.sample_folder,"already exsits")
+
+    # checkpoints outfolder
+    if not os.path.exists('./checkpoints'):
+        os.makedirs('./checkpoints')
+    if config.ckpt_folder is None:
+        config.ckpt_folder = 'checkpoints/%s' % (config.dataset)
+    if not os.path.exists(config.ckpt_folder):
+        os.makedirs(config.ckpt_folder)
+        print("Directory",config.ckpt_folder,"has created")
+    else:
+        print("Directory",config.ckpt_folder,"already exsits")
 
     config.manual_seed = random.randint(1, 10000)
     print("Random Seed: ", config.manual_seed)

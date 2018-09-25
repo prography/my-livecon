@@ -50,21 +50,23 @@ class Trainer(object):
         self.decay_epoch = config.decay_epoch
         self.cycle_lambda = config.cycle_lambda
 
-        self.outf = config.outf
         self.sample_step = config.sample_step
         self.checkpoint_step = config.checkpoint_step
         self.log_step = config.log_step
 
+        self.sample_folder = config.sample_folder
+        self.ckpt_folder = config.ckpt_folder
+
         self.build_model()
 
     def load_model(self):
-        print("[*] Load models from {}...".format(self.outf))
+        print("[*] Load models from {}...".format(self.ckpt_folder))
 
-        paths = glob(os.path.join(self.outf, 'net*.pth'))
+        paths = glob(os.path.join(self.ckpt_folder, 'net*.pth'))
         paths.sort()
 
         if len(paths) == 0:
-            print("[!] No checkpoint found in {}...".format(self.outf))
+            print("[!] No checkpoint found in {}...".format(self.ckpt_folder))
             return
 
         epochs = [int(os.path.basename(path.split('.')[0].split('_')[-2].split('-')[-1])) for path in paths]
@@ -72,10 +74,10 @@ class Trainer(object):
         steps = [int(os.path.basename(path.split('.')[0].split('_')[-1].split('-')[-1])) for path in paths]
         self.start_step = str(max(steps))
 
-        G_AB_filename = '{}/netG_A_epoch-{}_step-{}.pth'.format(self.outf, self.start_epoch, self.start_step)
-        G_BA_filename = '{}/netG_B_epoch-{}_step-{}.pth'.format(self.outf, self.start_epoch, self.start_step)
-        D_A_filename = '{}/netD_A_epoch-{}_step-{}.pth'.format(self.outf, self.start_epoch, self.start_step)
-        D_B_filename = '{}/netD_B_epoch-{}_step-{}.pth'.format(self.outf, self.start_epoch, self.start_step)
+        G_AB_filename = '{}/netG_A_epoch-{}_step-{}.pth'.format(self.ckpt_folder, self.start_epoch, self.start_step)
+        G_BA_filename = '{}/netG_B_epoch-{}_step-{}.pth'.format(self.ckpt_folder, self.start_epoch, self.start_step)
+        D_A_filename = '{}/netD_A_epoch-{}_step-{}.pth'.format(self.ckpt_folder, self.start_epoch, self.start_step)
+        D_B_filename = '{}/netD_B_epoch-{}_step-{}.pth'.format(self.ckpt_folder, self.start_epoch, self.start_step)
 
         self.netG_AB.load_state_dict(torch.load(G_AB_filename))
         self.netG_BA.load_state_dict(torch.load(G_BA_filename))
@@ -121,12 +123,14 @@ class Trainer(object):
         A_loader, B_loader = iter(self.a_data_loader), iter(self.b_data_loader)
         valid_x_A, valid_x_B = self._get_variable(A_loader.next()), self._get_variable(B_loader.next())
 
-        vutils.save_image(valid_x_A.data, '{}/valid_x_A.png'.format(self.outf), nrow=10)
-        vutils.save_image(valid_x_B.data, '{}/valid_x_B.png'.format(self.outf), nrow=10)
+        vutils.save_image(valid_x_A.data, '{}/valid_x_A.png'.format(self.sample_folder), nrow=10)
+        vutils.save_image(valid_x_B.data, '{}/valid_x_B.png'.format(self.sample_folder), nrow=10)
 
         # setup visdom
         vis = Visualizer()
 
+
+        print("Learning started!")
         start_time = time.time()
         for epoch in range(self.niter):
             if (epoch+1) > self.decay_epoch:
@@ -261,15 +265,24 @@ class Trainer(object):
                     cycleA = self.netG_BA(fakeB)
                     cycleB = self.netG_AB(fakeA)
 
-                    utils.save_imgs(realA, fakeB, cycleA, realB, fakeA, cycleB, self.outf, epoch, step)
+                    utils.save_imgs(realA, fakeB, cycleA, realB, fakeA, cycleB, self.sample_folder, epoch, step)
 
 
-                if (step+1) % self.checkpoint_step == 0:
-                    torch.save(self.netG_AB.state_dict(), '%s/netG_A_epoch-%d_step-%s.pth' % (self.outf, epoch, step))
-                    torch.save(self.netD_A.state_dict(), '%s/netD_A_epoch-%d_step-%s.pth' % (self.outf, epoch, step))
-                    torch.save(self.netG_BA.state_dict(), '%s/netG_B_epoch-%d_step-%s.pth' % (self.outf, epoch, step))
-                    torch.save(self.netD_B.state_dict(), '%s/netD_B_epoch-%d_step-%s.pth' % (self.outf, epoch, step))
+                if (step+1) % self.checkpoint_step == 0 and (epoch+1) % 2 == 0:
+                    torch.save(self.netG_AB.state_dict(), '%s/netG_A_epoch-%d_step-%s.pth' % (self.ckpt_folder, epoch, step))
+                    torch.save(self.netD_A.state_dict(), '%s/netD_A_epoch-%d_step-%s.pth' % (self.ckpt_folder, epoch, step))
+                    torch.save(self.netG_BA.state_dict(), '%s/netG_B_epoch-%d_step-%s.pth' % (self.ckpt_folder, epoch, step))
+                    torch.save(self.netD_B.state_dict(), '%s/netD_B_epoch-%d_step-%s.pth' % (self.ckpt_folder, epoch, step))
                     print("Saved checkpoint")
+
+        print("Learning finished!")
+        torch.save(self.netG_AB.state_dict(), "%s/final_netG_AB.pth" % (self.ckpt_folder))
+        torch.save(self.netG_BA.state_dict(), "%s/final_netG_BA.pth" % (self.ckpt_folder))
+        torch.save(self.netD_A.state_dict(), "%s/final_netD_A.pth" % (self.ckpt_folder))
+        torch.save(self.netD_B.state_dict(), "%s/final_netD_B.pth" % (self.ckpt_folder))
+        print("Final model checkpoints saved!")
+
+        vis.plot("Learning finished!", 1)
 
 
     def _get_variable(self, inputs):

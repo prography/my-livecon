@@ -4,3 +4,4 @@
 
 /character_generator/data
 /character_generator/samples/*.pth
+/character_generator/checkpoints/*.pth
