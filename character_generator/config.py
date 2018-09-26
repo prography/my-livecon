@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser()
 
 # dataset configuration
 parser.add_argument('--dataset', default='face2ghibli', type=str, help='name of your dataset')
-parser.add_argument('--dataroot', default='dataset/dataset', help='path to dataset.')
+parser.add_argument('--dataroot', default='D:/Deep_learning/Data/멘토_LiveCon/dataset', help='path to dataset.')
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=1)
 parser.add_argument('--batch_size', type=int, default=1, help='input batch size')
 parser.add_argument('--image_size', type=int, default=256, help='the height / width of the input image to network')
@@ -34,7 +34,7 @@ parser.add_argument('--sample_step', type=int, default=500, help='step of saving
 parser.add_argument('--checkpoint_step', type=int, default=1800, help='step of saving checkpoints')
 
 # directory configuration
-parser.add_argument('--model_path', default='', help="path to saved models (to continue training)")
+parser.add_argument('--model_path', default='checkpoints/10-20/final_netG_AB.pth', help="path to saved models (to continue training)")
 parser.add_argument('--sample_folder', default=None, help='folder to training sample images')
 parser.add_argument('--ckpt_folder', default=None, help='folder to model checkpoints')
 parser.add_argument('--test_result_folder', default='test', help='folder to test output images')

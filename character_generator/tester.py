@@ -37,7 +37,7 @@ class Tester(object):
             print("Model path doesn't exist!")
 
         self.netG_AB = Generator(self.ngpu, self.ngf, self.input_nc, self.output_nc)
-        self.netG_AB.load_state_dict(torch.load(os.path.join(self.model_path, "*_netG_AB.pth"), map_location=lambda storage, loc: storage))
+        self.netG_AB.load_state_dict(torch.load(self.model_path, map_location=lambda storage, loc: storage))
         self.netG_AB = self.netG_AB.to(device)
         self.netG_AB.eval()
 

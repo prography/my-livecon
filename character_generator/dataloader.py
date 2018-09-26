@@ -1,4 +1,4 @@
-import os, glob
+import os, glob,shutil
 from tqdm import tqdm
 from PIL import Image
 import torch.utils.data
@@ -79,11 +79,20 @@ def train_test_split(root, split_ratio):
     for i in tqdm(range(len(paths_A))):
         a, b = paths_A[i], paths_B[i]
         if i <= num_train:
-            os.system("cp %s %s/train/A/%s" % (a,root,a.split("/")[-1]))
-            os.system("cp %s %s/train/B/%s" % (b,root,b.split("/")[-1]))
+            destA = "%s/train/A/%s" % (root, a.split("\\")[-1])
+            destB = "%s/train/B/%s" % (root, b.split("\\")[-1])
+            # print(a, destA)
+            # print(b, destB)
+            # os.system("cp %s %s/train/A/%s" % (a,root,a.split("/")[-1]))
+            shutil.copy(a, destA)
+            # os.system("cp %s %s/train/B/%s" % (b,root,b.split("/")[-1]))
+            shutil.copy(b, destB)
+
         else:
-            os.system("cp %s %s/test/A/%s" % (a,root,a.split("/")[-1]))
-            os.system("cp %s %s/test/B/%s" % (b,root,b.split("/")[-1]))
+            # os.system("cp %s %s/test/A/%s" % (a,root,a.split("/")[-1]))
+            # os.system("cp %s %s/test/B/%s" % (b,root,b.split("/")[-1]))
+            shutil.copy(a, "%s/test/A/%s" % (root, a.split("\\")[-1]))
+            shutil.copy(b, "%s/test/B/%s" % (root, b.split("\\")[-1]))
 
     print("Finished splitting!")
 
