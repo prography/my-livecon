@@ -20,16 +20,22 @@ class Dataset(torch.utils.data.Dataset):
 
         self.shape = list(Image.open(self.paths[0]).size) + [3]
 
-        self.transform = transforms.Compose([
+        self.train_transform = transforms.Compose([
             transforms.Resize(image_size),
             transforms.CenterCrop(image_size),
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+        ])
+
+        self.test_transform = transforms.Compose([
+            transforms.Resize(image_size),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ])
 
     def __getitem__(self, index):
         image = Image.open(self.paths[index]).convert('RGB')
-        return self.transform(image)
+        return self.train_transform(image)
 
     def __len__(self):
         return len(self.paths)
@@ -81,7 +87,7 @@ def train_test_split(root, split_ratio):
 
     print("Finished splitting!")
 
-def get_loader(root, batch_size, image_size, split_ratio, num_workers=1):
+def get_train_loader(root, batch_size, image_size, split_ratio, num_workers=1):
     train_root = os.path.join(root, "train")
 
     if not checkAB(root):
@@ -113,5 +119,40 @@ def get_loader(root, batch_size, image_size, split_ratio, num_workers=1):
     trainB_loader.shape = trainB_dataset.shape
 
 
-    dataloader = [trainA_loader, trainB_loader]
-    return dataloader
+    train_loaders = [trainA_loader, trainB_loader]
+    return train_loaders
+
+def get_test_loader(root, batch_size, image_size, split_ratio, num_workers=1):
+    test_root = os.path.join(root, 'test')
+
+    if not checkAB(root):
+        raise Exception("Incorrect directory settings!")
+
+    len_test_A = len(glob.glob(os.path.join(test_root, 'A/*')))
+    len_test_B = len(glob.glob(os.path.join(test_root, 'B/*')))
+
+
+    if len_test_A and len_test_B:
+        pass
+    else:
+        train_test_split(root, split_ratio)
+
+    testA_dataset, testB_dataset = \
+        Dataset(test_root, image_size, "A"), \
+        Dataset(test_root, image_size, "B")
+
+    testA_loader = torch.utils.data.DataLoader(dataset=testA_dataset,
+                                                batch_size=batch_size,
+                                                shuffle=True,
+                                                num_workers=num_workers)
+    testB_loader = torch.utils.data.DataLoader(dataset=testB_dataset,
+                                                batch_size=batch_size,
+                                                shuffle=True,
+                                                num_workers=num_workers)
+
+    testA_loader.shape = testA_dataset.shape
+    testB_loader.shape = testB_dataset.shape
+
+
+    test_loaders = [testA_loader, testB_loader]
+    return test_loaders

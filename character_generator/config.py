@@ -35,8 +35,9 @@ parser.add_argument('--checkpoint_step', type=int, default=1800, help='step of s
 
 # directory configuration
 parser.add_argument('--model_path', default='', help="path to saved models (to continue training)")
-parser.add_argument('--sample_folder', default=None, help='folder to output images and model checkpoints')
-parser.add_argument('--ckpt_folder', default=None, help='folder to output images and model checkpoints')
+parser.add_argument('--sample_folder', default=None, help='folder to training sample images')
+parser.add_argument('--ckpt_folder', default=None, help='folder to model checkpoints')
+parser.add_argument('--test_result_folder', default='test', help='folder to test output images')
 
 def get_config():
     return parser.parse_args()

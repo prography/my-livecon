@@ -3,7 +3,7 @@ import random
 import torch
 import torch.backends.cudnn as cudnn
 import os
-from dataloader import get_loader
+from dataloader import get_train_loader
 from config import get_config
 from trainer import Trainer
 
@@ -43,8 +43,8 @@ def main(config):
     if torch.cuda.is_available() and not config.cuda:
         print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
-    data_lodaer = get_loader(config.dataroot, config.batch_size, config.image_size, config.split_ratio,
-                            num_workers=int(config.workers))
+    data_lodaer = get_train_loader(config.dataroot, config.batch_size, config.image_size, config.split_ratio,
+                                   num_workers=int(config.workers))
 
     trainer = Trainer(config, data_lodaer)
     trainer.train()
