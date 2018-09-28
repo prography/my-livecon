@@ -34,10 +34,10 @@ parser.add_argument('--sample_step', type=int, default=500, help='step of saving
 parser.add_argument('--checkpoint_step', type=int, default=1800, help='step of saving checkpoints')
 
 # directory configuration
-parser.add_argument('--model_path', default='checkpoints/10-20/final_netG_AB.pth', help="path to saved models (to continue training)")
+parser.add_argument('--model_path', default='checkpoints/20-50/netG_A_epoch-21_step-1799.pth', help="path to saved models (to continue training)")
 parser.add_argument('--sample_folder', default=None, help='folder to training sample images')
 parser.add_argument('--ckpt_folder', default=None, help='folder to model checkpoints')
-parser.add_argument('--test_result_folder', default='test', help='folder to test output images')
+parser.add_argument('--test_result_folder', default='test/20-50', help='folder to test output images')
 
 def get_config():
     return parser.parse_args()
