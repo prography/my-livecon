@@ -3,7 +3,7 @@ import argparse
 parser = argparse.ArgumentParser()
 
 # data processing hyper-parameters
-parser.add_argument('--dataroot', type=str, default='../character/dataset/dataset', help='root directory of the dataset')
+parser.add_argument('--dataroot', type=str, default='D:/Deep_learning/Data/멘토_LiveCon/dataset', help='root directory of the dataset')
 parser.add_argument('--batch_size', type=int, default=1, help='size of the batches')
 parser.add_argument('--num_workers', type=int, default=0, help='number of cpu threads to use during batch generation')
 parser.add_argument('--unaligned', type=bool, default=True, help='whether dataset A-B matches')
@@ -24,6 +24,11 @@ parser.add_argument('--netD_B', type=str, default="", help="to continue training
 parser.add_argument('--log_interval', type=int, default=10, help="step interval to print log message")
 parser.add_argument('--sample_interval', type=int, default=100, help="step interval to save sample images. default=100")
 parser.add_argument('--sample_folder', type=str, default=None)
+
+# test configuration
+parser.add_argument('--model_path', type=str, default="checkpoints/0-20/netG_A2B.pth")
+parser.add_argument('--test_result_folder', type=str, default="test/0-20")
+
 
 config = parser.parse_args()
 

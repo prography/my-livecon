@@ -2,12 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aa458c6d-f7a6-4c82-9179-f5aca7d7f51f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/character_generator/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/character_generator/dataloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator/dataloader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/character_generator/samples/fake_A.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/character_generator/samples/fake_B.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/character_generator/samples/real_A.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/character_generator/samples/real_B.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_0.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_0.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_0.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_0.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_3.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_2/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_2/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_2/dataloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_2/dataloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_CycleGAN_2/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_CycleGAN_2/tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_STN/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_STN/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_STN/dataloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_STN/dataloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_STN/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_STN/tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/character_generator_STN/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/character_generator_STN/trainer.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,52 +30,54 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/character_generator/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="12" selection-start-line="12" selection-end-line="12" />
-              <folding>
-                <element signature="e#0#37#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+      <file leaf-file-name="input_0.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_0.jpg">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
-      <file leaf-file-name="dataloader.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/character_generator/dataloader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="580">
-              <caret line="35" column="22" lean-forward="true" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+      <file leaf-file-name="output_0.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_0.jpg">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/character_generator/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1080">
-              <caret line="56" column="35" selection-start-line="56" selection-start-column="35" selection-end-line="56" selection-end-column="35" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+      <file leaf-file-name="input_1.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_1.jpg">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
-      <file leaf-file-name="trainer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/character_generator/trainer.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="327">
-              <caret line="186" selection-start-line="186" selection-end-line="186" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
+      <file leaf-file-name="output_1.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_1.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file leaf-file-name="input_2.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_2.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file leaf-file-name="output_2.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_2.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file leaf-file-name="input_3.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_3.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file leaf-file-name="output_3.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_3.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file leaf-file-name="input_4.jpg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_4.jpg">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file leaf-file-name="output_4.jpg" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_4.jpg">
+          <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
     </leaf>
@@ -94,13 +108,20 @@
         <option value="$PROJECT_DIR$/character_generator/config.py" />
         <option value="$PROJECT_DIR$/character_generator/trainer.py" />
         <option value="$PROJECT_DIR$/character_generator/dataloader.py" />
+        <option value="$PROJECT_DIR$/character_generator_CycleGAN_1/config.py" />
+        <option value="$PROJECT_DIR$/character_generator_CycleGAN_2/config.py" />
+        <option value="$PROJECT_DIR$/character_generator_CycleGAN_2/dataloader.py" />
+        <option value="$PROJECT_DIR$/character_generator_CycleGAN_2/tester.py" />
+        <option value="$PROJECT_DIR$/character_generator_STN/config.py" />
+        <option value="$PROJECT_DIR$/character_generator_STN/dataloader.py" />
+        <option value="$PROJECT_DIR$/character_generator_STN/tester.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-10" />
-    <option name="y" value="-10" />
-    <option name="width" value="978" />
+    <option name="x" value="313" />
+    <option name="y" value="80" />
+    <option name="width" value="980" />
     <option name="height" value="1050" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -119,11 +140,6 @@
               <item name="멘토_Livecon" type="b2602c69:ProjectViewProjectNode" />
               <item name="멘토_Livecon" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="멘토_Livecon" type="b2602c69:ProjectViewProjectNode" />
-              <item name="멘토_Livecon" type="462c0819:PsiDirectoryNode" />
-              <item name="character_generator" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -135,6 +151,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\young\Desktop\멘토_Livecon\character_generator_STN\styles" />
       <recent name="C:\Users\young\Desktop\my-livecon\motion_generator" />
       <recent name="C:\Users\young\Desktop\my-livecon\character_generator" />
     </key>
@@ -151,6 +168,74 @@
       </list>
     </option>
   </component>
+  <component name="RunManager" selected="Python.tester (2)">
+    <configuration name="tester (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="my-livecon" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/character_generator_CycleGAN_2" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/character_generator_CycleGAN_2/tester.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="tester (2)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="my-livecon" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/character_generator_STN" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/character_generator_STN/tester.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="tester" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="my-livecon" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/character_generator_CycleGAN_1" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/character_generator_CycleGAN_1/tester.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.tester" />
+      <item itemvalue="Python.tester (1)" />
+      <item itemvalue="Python.tester (2)" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.tester (2)" />
+        <item itemvalue="Python.tester (1)" />
+        <item itemvalue="Python.tester" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -166,14 +251,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16523464" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32914925" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -191,106 +275,162 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/character_generator/main.py">
+    <entry file="file://$PROJECT_DIR$/character_generator/main.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/dataloader.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/utils.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/trainer.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/model.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/main.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/vis_tool.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/config.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/utils.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/trainer.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator/dataloader.py" />
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_0.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_0.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_1.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_input_2.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/test/20-50/test_result_2.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/tester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        <state relative-caret-position="126">
+          <caret line="7" column="11" lean-forward="true" selection-end-line="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_2/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-270">
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/dataloader.py">
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_1/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="32" column="49" lean-forward="true" selection-start-line="32" selection-start-column="49" selection-end-line="32" selection-end-column="49" />
+        <state relative-caret-position="-54">
+          <caret line="6" column="84" selection-start-line="6" selection-start-column="42" selection-end-line="6" selection-end-column="84" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_2/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="29" column="41" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_2/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1242">
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_2/dataloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="356">
+          <caret line="63" column="21" selection-start-line="63" selection-start-column="21" selection-end-line="63" selection-end-column="21" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/utils.py">
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_2/test/0-20/test_result_0.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/trainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="56" column="35" selection-start-line="56" selection-start-column="35" selection-end-line="56" selection-end-column="35" />
+        <state relative-caret-position="-2182">
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/trainer.py">
+    <entry file="file://$PROJECT_DIR$/character_generator_CycleGAN_2/tester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3500">
-          <caret line="186" lean-forward="true" selection-start-line="186" selection-end-line="186" />
+        <state relative-caret-position="164">
+          <caret line="37" column="106" selection-start-line="37" selection-start-column="65" selection-end-line="37" selection-end-column="106" />
           <folding>
-            <element signature="e#0#16#0" expanded="true" />
+            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/model.py">
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1640">
-          <caret line="103" column="18" selection-start-line="103" selection-start-column="18" selection-end-line="103" selection-end-column="18" />
+        <state relative-caret-position="-130">
+          <caret line="6" column="97" lean-forward="true" selection-start-line="6" selection-start-column="97" selection-end-line="6" selection-end-column="97" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/main.py">
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/dataloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        <state relative-caret-position="338">
+          <caret line="25" column="49" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="49" />
           <folding>
-            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#0#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/vis_tool.py">
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/tester.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="248" column="19" selection-start-line="248" selection-start-column="19" selection-end-line="248" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="56" column="35" selection-start-line="56" selection-start-column="35" selection-end-line="56" selection-end-column="35" />
+        <state relative-caret-position="194">
+          <caret line="39" column="24" lean-forward="true" selection-start-line="39" selection-start-column="24" selection-end-line="39" selection-end-column="24" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/trainer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="186" selection-start-line="186" selection-end-line="186" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_0.jpg">
+      <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/character_generator/dataloader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="35" column="22" lean-forward="true" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_0.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_1.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_1.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_2.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_2.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_3.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_3.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/input_4.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/character_generator_STN/test/output_4.jpg">
+      <provider selected="true" editor-type-id="images" />
     </entry>
   </component>
 </project>

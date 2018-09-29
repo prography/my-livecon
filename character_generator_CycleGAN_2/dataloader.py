@@ -3,6 +3,7 @@ import glob, random, os
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
+from torchvision.datasets import ImageFolder
 
 from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -46,6 +47,18 @@ def get_loader(config):
 
     dataset = ImageDataset(config.dataroot, transform=transform, unaligned=config.unaligned)
     dataloader = DataLoader(dataset, batch_size=config.batch_size, shuffle=True, num_workers=config.num_workers)
+
+    print(len(dataloader))
+    return dataloader
+
+def get_test_loader(config):
+    transform = transforms.Compose([
+        transforms.Resize(int(config.image_size * 1.12), Image.BICUBIC),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    dataset = ImageFolder(config.dataroot, transform=transform)
+    dataloader = DataLoader(dataset, batch_size=config.batch_size, shuffle=False, num_workers=config.num_workers)
 
     print(len(dataloader))
     return dataloader

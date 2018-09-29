@@ -8,7 +8,7 @@ from torchvision import transforms
 from model.nst import TransferNet
 from model.vgg import VGGNet
 import utils
-from vis_tool import Visualizer
+# from vis_tool import Visualizer
 
 # Device configuration
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -50,6 +50,7 @@ class Trainer(object):
 
         # to continue training
         if self.config.training != "":
+            print("[ * ] Load trained model...!")
             tfNet.load_state_dict(torch.load(self.config.training))
 
         self.tfNet = tfNet.to(device)
@@ -63,7 +64,7 @@ class Trainer(object):
         self.vggNet = vggNet.to(device)
 
     def train(self):
-        vis = Visualizer()
+        # vis = Visualizer()
 
         optimizer = optim.Adam(self.tfNet.parameters(), self.lr, betas=[0.5, 0.999])
         criterion = nn.MSELoss()
@@ -75,7 +76,6 @@ class Trainer(object):
 
         features_style = self.vggNet(style)
         gram_style = [utils.gram_matrix(f) for f in features_style]
-
 
         start_time = time.time()
         print("Learning started!!!")
@@ -116,9 +116,9 @@ class Trainer(object):
                     print("[%d/%d] [%d/%d] time: %f content loss:%.4f style loss:%.4f total loss: %.4f"
                           % (epoch+1, self.nepochs, step+1, len(self.dataloader), end_time - start_time,
                              content_loss.item(), style_loss.item(), total_loss.item()))
-                    vis.plot("Content loss per %d steps" % self.log_interval, content_loss.item())
-                    vis.plot("Style loss per %d steps" % self.log_interval, style_loss.item())
-                    vis.plot("Total loss per %d steps" % self.log_interval, total_loss.item())
+                    # vis.plot("Content loss per %d steps" % self.log_interval, content_loss.item())
+                    # vis.plot("Style loss per %d steps" % self.log_interval, style_loss.item())
+                    # vis.plot("Total loss per %d steps" % self.log_interval, total_loss.item())
 
             # do save sample images
             if (epoch+1) % self.sample_interval == 0:
