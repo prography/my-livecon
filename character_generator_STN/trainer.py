@@ -1,4 +1,5 @@
 import time
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -50,7 +51,7 @@ class Trainer(object):
 
         # to continue training
         if self.config.training != "":
-            print("[ * ] Load trained model...!")
+            print("[*] Load trained model...!")
             tfNet.load_state_dict(torch.load(self.config.training))
 
         self.tfNet = tfNet.to(device)
@@ -79,6 +80,11 @@ class Trainer(object):
 
         start_time = time.time()
         print("Learning started!!!")
+
+        c_loss_list = []
+        s_loss_list = []
+        t_loss_list = []
+
         for epoch in range(self.nepochs):
             for step, (content, _) in enumerate(self.dataloader):
                 self.tfNet.train()
@@ -100,6 +106,8 @@ class Trainer(object):
                 content_loss = self.content_weight * criterion(features_output.relu2_2,
                                                                features_content.relu2_2)
 
+                c_loss_list.append(content_loss.item())
+
                 style_loss = 0.
                 for ft_output, gm_style in zip(features_output, gram_style):
                     gm_output = utils.gram_matrix(ft_output)
@@ -107,7 +115,12 @@ class Trainer(object):
                                             gm_style[:step_batch, :, :])
                 style_loss *= self.style_weight
 
+                s_loss_list.append(style_loss.item())
+
                 total_loss = content_loss + style_loss
+
+                t_loss_list.append(total_loss.item())
+
                 total_loss.backward()
                 optimizer.step()
 
@@ -115,10 +128,14 @@ class Trainer(object):
                     end_time = time.time()
                     print("[%d/%d] [%d/%d] time: %f content loss:%.4f style loss:%.4f total loss: %.4f"
                           % (epoch+1, self.nepochs, step+1, len(self.dataloader), end_time - start_time,
-                             content_loss.item(), style_loss.item(), total_loss.item()))
+                             np.mean(c_loss_list), np.mean(s_loss_list), np.mean(t_loss_list)))
                     # vis.plot("Content loss per %d steps" % self.log_interval, content_loss.item())
                     # vis.plot("Style loss per %d steps" % self.log_interval, style_loss.item())
                     # vis.plot("Total loss per %d steps" % self.log_interval, total_loss.item())
+
+                    c_loss_list.clear()
+                    s_loss_list.clear()
+                    t_loss_list.clear()
 
             # do save sample images
             if (epoch+1) % self.sample_interval == 0:

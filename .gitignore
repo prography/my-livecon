@@ -4,3 +4,4 @@
 *.pth
 
 /character_generator/data
+/character_generator_DTN/dataset
