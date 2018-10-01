@@ -15,6 +15,10 @@ def main(config):
     if config.sample_folder is None:
         config.sample_folder = 'samples'
     os.system('mkdir {0}'.format(config.sample_folder))
+    
+    if config.ckpt_folder is None:
+        config.ckpt_folder = 'checkpoints'
+    os.system('mkdir {0}'.format(config.ckpt_folder))
 
     config.manual_seed = random.randint(1, 10000)
     print("Random Seed: ", config.manual_seed)

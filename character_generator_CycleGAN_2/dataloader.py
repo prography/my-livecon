@@ -18,9 +18,9 @@ class ImageDataset(Dataset):
         self.transform = transform
         self.unaligned = unaligned
 
-        self.files_A = sorted(glob.glob(os.path.join(dataroot, '%s/A' % mode) + '/*.*'))
+        self.files_A = sorted(glob.glob(os.path.join(dataroot, 'A') + '/*.*'))
         print(self.files_A)
-        self.files_B = sorted(glob.glob(os.path.join(dataroot, '%s/B' % mode) + '/*.*'))
+        self.files_B = sorted(glob.glob(os.path.join(dataroot, 'B') + '/*.*'))
         print(self.files_B)
 
     def __getitem__(self, idx):

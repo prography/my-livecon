@@ -28,13 +28,16 @@ class Trainer(object):
         self.n_epochs = config.num_epochs
         self.lr = config.lr
         self.decay_epoch = config.decay_epoch
+
         self.log_interval = config.log_interval
         self.sample_interval = config.sample_interval
+        self.ckpt_interval = config.ckpt_interval
 
         self.n_in = config.n_in
         self.n_out = config.n_out
 
         self.sample_folder = config.sample_folder
+        self.ckpt_folder = config.ckpt_folder
 
         self.build_net()
 
@@ -65,7 +68,7 @@ class Trainer(object):
 
     def sample_images(self, epoch, images):
         for image_name, image in images.items():
-            vutils.save_image(denorm(image), "%s\\epoch%d_%s.png" % (self.sample_folder, epoch, image_name))
+            vutils.save_image(denorm(image), "%s/epoch%d_%s.png" % (self.sample_folder, epoch, image_name))
 
     def train(self):
         vis = Visualizer()
@@ -230,13 +233,20 @@ class Trainer(object):
                     self.sample_images(epoch, images)
                     print("Sample images saved!")
 
+                if (step+1) % self.ckpt_interval == 0:
+                    torch.save(self.netG_A2B.state_dict(), "%s/netG_A2B_epoch%d.pth" % (self.ckpt_folder, epoch))
+                    torch.save(self.netG_B2A.state_dict(), "%s/netG_B2A_epoch%d.pth" % (self.ckpt_folder, epoch))
+                    torch.save(self.netD_A.state_dict(), "%s/netD_A_epoch%d.pth" % (self.ckpt_folder, epoch))
+                    torch.save(self.netD_B.state_dict(), "%s/netD_B_epoch%d.pth" % (self.ckpt_folder, epoch))
+                    print("Checkpoints saved!")
+
             lr_scheduler_G.step()
             lr_scheduler_D_A.step()
             lr_scheduler_D_B.step()
 
         print("Learning finished!!!")
-        torch.save(self.netG_A2B.state_dict(), "%s\\netG_A2B.pth" % self.sample_folder)
-        torch.save(self.netG_B2A.state_dict(), "%s\\netG_B2A.pth" % self.sample_folder)
-        torch.save(self.netD_A.state_dict(), "%s\\netD_A.pth" % self.sample_folder)
-        torch.save(self.netD_B.state_dict(), "%s\\netD_B.pth" % self.sample_folder)
+        torch.save(self.netG_A2B.state_dict(), "%s/final_netG_A2B.pth" % self.ckpt_folder)
+        torch.save(self.netG_B2A.state_dict(), "%s/final_netG_B2A.pth" % self.ckpt_folder)
+        torch.save(self.netD_A.state_dict(), "%s/final_netD_A.pth" % self.ckpt_folder)
+        torch.save(self.netD_B.state_dict(), "%s/final_netD_B.pth" % self.ckpt_folder)
         vis.plot("ver2 training completed!", 1)
