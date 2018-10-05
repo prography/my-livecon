@@ -2,12 +2,16 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.utils as vutils
+import torchvision.transforms as T
+from torch.autograd import Variable
 
-from models import Generator, Discriminator, Encoder
+from models.dtn import Generator, Discriminator
+from models.encoder import vgg13
 from vis_tool import Visualizer
 import misc
 
 import numpy as np
+import collections, h5py
 
 # Device configuration
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -76,17 +80,29 @@ class Trainer(object):
 
         print("[*] Build Encoder model...")
 
-        self.netE = Encoder(self.in_ch, self.ngf, self.num_classes).to(device)
-        self.netE.apply(misc.weights_init)
+        # load pre-trained VGG DeepFace model as encoder
+        self.netE = vgg13()
 
-        if self.config.netE != '':
-            print("[*] Loading trained Encoder's weights...")
-            self.netE.load_state_dict(torch.load(self.config.netE))
+        self.netE.features = torch.nn.Sequential(collections.OrderedDict(zip(
+            ['conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1', 'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
+             'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3', 'relu3_3', 'pool3', 'conv4_1', 'relu4_1', 'conv4_2',
+             'relu4_2', 'conv4_3', 'relu4_3', 'pool4', 'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3', 'relu5_3',
+             'pool5'], self.netE.features)))
+        self.netE.classifier = torch.nn.Sequential(collections.OrderedDict(
+            zip(['fc6', 'relu6', 'drop6', 'fc7', 'relu7', 'drop7', 'fc8', 'prob'], self.netE.classifier)))
 
+        state_dict = h5py.File(self.config.netE_pretrained1, 'r')
+        torch.load(self.config.netE_pretrained2)
+
+        self.netE.load_state_dict(
+            {l: torch.from_numpy(np.array(v)).view_as(p) for k, v in state_dict.items() for l, p in
+             self.netE.named_parameters() if k in l})
+
+        self.netE = self.netE.to(device)
         print("[*] Build Encoder model completed!")
 
         print("[*] Build Discriminator model...")
-        self.netD = Discriminator(self.in_ch, self.out_ch, self.ndf)
+        self.netD = Discriminator(self.in_ch, self.out_ch, self.ndf).to(device)
         self.netD.apply(misc.weights_init)
 
         if self.config.netD != '':
@@ -102,6 +118,28 @@ class Trainer(object):
         self.netG.train()
         self.netE.eval() # freeze encoder
         self.netD.train()
+
+    # def get_d_input_tensor(self, x):
+    #     t = T.Compose([T.ToPILImage(), T.Resize((self.image_size, self.image_size)), T.ToTensor()])
+    #     x = x.squeeze(0).cpu()
+    #     out = t(x).unsqueeze(0).to(device)
+    #     return out
+    #
+    # def get_e_input_tensor(self, x):
+    #     t = T.Compose([T.ToPILImage(), T.Resize((224, 224)), T.ToTensor()])
+    #     x = x.squeeze(0).cpu()
+    #     out = t(x).unsqueeze(0).to(device)
+    #     return out
+    #
+    # def get_resized_t_tensor(self, x_hat_target, x):
+    #
+    #     # print("input:",x.shape)
+    #     # print("target:", x_hat_target.shape)
+    #
+    #     t = T.Compose([T.ToPILImage(), T.Resize((x_hat_target.size(2), x_hat_target.size(2))), T.ToTensor()])
+    #     x = x.squeeze(0).cpu()
+    #     out = t(x).unsqueeze(0).to(device)
+    #     return out
 
     def train(self):
         # setup visdom
@@ -150,20 +188,18 @@ class Trainer(object):
         val_target.resize_as_(val_target_item).copy_(val_target_item)
 
         vutils.save_image(val_source, "%s/samples_real_source.png" % self.sample_folder,
-                          nrow=16, normalize=True)
+                          nrow=6, normalize=True)
         vutils.save_image(val_target, "%s/samples_real_target.png" % self.sample_folder,
-                          nrow=16, normalize=True)
+                          nrow=6, normalize=True)
 
         # freezing encoder
         for p in self.netE.parameters():
             p.requires_grad = False
 
-
         gan_iters = 0
 
         lossD_list = []
         lossG_list = []
-
 
         print("Learning started...!")
 
@@ -202,12 +238,18 @@ class Trainer(object):
                     source_item[:, 1, :, :].unsqueeze_(1).copy_(source_item_1c)
                     source_item[:, 2, :, :].unsqueeze_(1).copy_(source_item_1c)
 
+                # our case
+                else:
+                    target_item, _ = next(target_iter)
+                    source_item, source_label = next(source_iter)
+
                 trg_mini_batch = target_item.size(0)
                 src_mini_batch = source_item.size(0)
                 source_idx += 1
                 target_idx += 1
 
                 if trg_mini_batch != src_mini_batch:
+                    print("[*] Dataset finished.. load again!")
                     continue
 
                 target_item = target_item.to(device)
@@ -226,18 +268,20 @@ class Trainer(object):
 
                 # compute error with real target
                 # real target label = 2
-                label_d.data.resize_(self.batch_size).fill_(real_target_label)
-                outD_real_target = self.netD(target)
+                label_d.data.resize_(trg_mini_batch).fill_(real_target_label) # 1
+                outD_real_target = self.netD(target) # 1, 3
+
                 errD_real_target = criterion_CE(outD_real_target, label_d)
                 errD_real_target.backward()
 
                 # compute error with fake target
                 _, h_target = self.netE(target)
+
                 x_hat_target = self.netG(h_target)
                 fake_target = x_hat_target.detach()
 
                 # fake target label = 1
-                label_d.data.resize_(self.batch_size).fill_(fake_target_label)
+                label_d.data.resize_(trg_mini_batch).fill_(fake_target_label)
                 outD_fake_target = self.netD(fake_target)
                 errD_fake_target = criterion_CE(outD_fake_target, label_d)
                 errD_fake_target.backward()
@@ -248,7 +292,7 @@ class Trainer(object):
                 fake_source = x_hat_source.detach()
 
                 # fake source label = 2
-                label_d.data.resize_(self.batch_size).fill_(fake_source_label)
+                label_d.data.resize_(src_mini_batch).fill_(fake_source_label)
                 outD_fake_source = self.netD(fake_source)
                 errD_fake_source = criterion_CE(outD_fake_source, label_d)
                 errD_fake_source.backward()
@@ -271,9 +315,11 @@ class Trainer(object):
                     # encoding fake source
                     pred_x_hat_source, _ = self.netE(x_hat_source)
                     L_const = criterion_CE(pred_x_hat_source.squeeze(3).squeeze(2), label_c)
+
                 else:
                     _, output_h_source = self.netE(x_hat_source)
-                    L_const = criterion_CAE(output_h_source, h_source.detach())
+                    L_const = criterion_CAE(Variable(output_h_source, requires_grad=True), h_source.detach())
+
                 L_const = L_const * self.alpha_CONST
 
                 if self.alpha_CONST != 0:
@@ -287,12 +333,13 @@ class Trainer(object):
 
                 # compute loss with real target label, fake source input
                 label_d.data.fill_(real_target_label)
+
                 outD_fake_source = self.netD(x_hat_source)
-                errG_fake_source = criterion_CE(outD_fake_source, label_d)
+                errG_fake_source = criterion_CE(Variable(outD_fake_source, requires_grad=True), label_d)
                 errG_fake_source.backward()
 
                 outD_fake_target = self.netD(x_hat_target)
-                errG_fake_target = criterion_CE(outD_fake_target, label_d)
+                errG_fake_target = criterion_CE(Variable(outD_fake_target, requires_grad=True), label_d)
                 errG_fake_target.backward()
 
                 lossG = errG_fake_target + errG_fake_source
@@ -308,8 +355,8 @@ class Trainer(object):
                              target_idx+1, len(self.train_loader_B),
                              np.mean(lossG_list), np.mean(lossD_list)))
 
-                    vis.plot("Generator loss per %d steps" % self.log_interval, np.mean(lossG_list))
-                    vis.plot("Discriminator loss per %d steps" % self.log_interval, np.mean(lossD_list))
+                    vis.plot("[DTN]Generator loss per %d steps" % self.log_interval, np.mean(lossG_list))
+                    vis.plot("[DTN]Discriminator loss per %d steps" % self.log_interval, np.mean(lossD_list))
 
                     lossG_list.clear()
                     lossD_list.clear()
@@ -330,13 +377,12 @@ class Trainer(object):
                         else:
                             single_img = val_source[idx, :, :, :].unsqueeze(0)
 
-                        single_img = single_img.to(device)
                         _, h_val = self.netE(single_img)
                         x_hat_val = self.netG(h_val)
                         val_batch_output[idx, :, :, :].unsqueeze_(0).copy_(x_hat_val.data)
 
                     vutils.save_image(val_batch_output, '%s/generated_epoch%04d_iter%08d.png'
-                                        % (self.sample_folder, epoch+1, gan_iters), nrow=16, normalize=True)
+                                        % (self.sample_folder, epoch+1, gan_iters), nrow=6, normalize=True)
                     print("[*] Saving sample images completed!")
 
                 # do checkpointing
@@ -352,4 +398,4 @@ class Trainer(object):
         torch.save(self.netD.state_dict(), "%s/final_netD.pth" % self.ckpt_folder)
         print("[*] Saving final checkpoints completed!")
 
-
+        vis.plot("Domain Transfer Network training finished!", 1)

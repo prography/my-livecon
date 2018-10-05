@@ -10,6 +10,7 @@ cudnn.fastest = True
 from trainer import Trainer
 from config import get_config
 from dataloader import get_loader
+# from prepare_dataset import split_train_test
 
 def main(config):
     # make directories
@@ -39,7 +40,7 @@ def main(config):
                                        config.original_image_size, config.image_size,
                                        config.batch_size, config.workers, split='train')
 
-    val_loader_A, val_set_A = get_loader(config.datasetA, config.datarootA,
+    val_loader_A, val_set_A = get_loader(config.datasetA, config.valDatarootA,
                                        config.original_image_size, config.image_size,
                                        config.val_batch_size, config.workers, split='test')
 
@@ -47,7 +48,7 @@ def main(config):
                                             config.original_image_size, config.image_size,
                                             config.batch_size, config.workers, split='train')
 
-    val_loader_B, val_set_B = get_loader(config.datasetB, config.datarootB,
+    val_loader_B, val_set_B = get_loader(config.datasetB, config.valDatarootB,
                                          config.original_image_size, config.image_size,
                                          config.val_batch_size, config.workers, split='test')
 
