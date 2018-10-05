@@ -90,6 +90,9 @@ class Tester(object):
 
 if __name__ == "__main__":
     config = get_config()
+
+    
+
     tester = Tester(config)
     tester.test(testnum=5)
 

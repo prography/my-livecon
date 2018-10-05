@@ -54,12 +54,20 @@ class Trainer(object):
 
         if self.config.netG_A2B != "":
             netG_A2B.load_state_dict(torch.load(self.config.netG_A2B))
+            print("[*] Load model from %s!" % self.config.netG_A2B)
+
         if self.config.netG_B2A != "":
             netG_B2A.load_state_dict(torch.load(self.config.netG_B2A))
+            print("[*] Load model from %s!" % self.config.netG_B2A)
+
         if self.config.netD_A != "":
             netD_A.load_state_dict(torch.load(self.config.netD_A))
+            print("[*] Load model from %s!" % self.config.netD_A)
+
         if self.config.netD_B != "":
             netD_B.load_state_dict(torch.load(self.config.netD_B))
+            print("[*] Load model from %s!" % self.config.netD_B)
+
 
         self.netG_A2B = netG_A2B.to(device)
         self.netG_B2A = netG_B2A.to(device)
@@ -212,9 +220,11 @@ class Trainer(object):
 
                 if (step+1) % self.log_interval == 0:
                     end_time = time.time()
-                    print("[%d/%d] [%d/%d] time:%f loss_G:%.3f loss_D_A:%.3f loss_D_B:%.3f"
+
+
+                    print("[%d/%d] [%d/%d] time:%f loss_G:%.3f loss_D:%.3f"
                           % (epoch+1, self.n_epochs, step+1, len(self.dataloader), end_time-start_time,
-                             loss_G, loss_D_A, loss_D_B))
+                             np.mean(avg_loss_G), np.mean(avg_loss_D)))
 
                     vis.plot("ver2 loss_G", np.mean(avg_loss_G))
                     vis.plot("ver2 loss_D", np.mean(avg_loss_D))

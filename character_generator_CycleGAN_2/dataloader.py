@@ -20,7 +20,7 @@ class ImageDataset(Dataset):
 
         self.files_A = sorted(glob.glob(os.path.join(dataroot, 'A') + '/*.*'))
         print(self.files_A)
-        self.files_B = sorted(glob.glob(os.path.join(dataroot, 'B') + '/*.*'))
+        self.files_B = sorted(glob.glob(os.path.join(dataroot, 'D') + '/*.*'))
         print(self.files_B)
 
     def __getitem__(self, idx):
