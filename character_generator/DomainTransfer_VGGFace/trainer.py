@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.utils as vutils
-import torchvision.transforms as T
 from torch.autograd import Variable
 
 from models.dtn import Generator, Discriminator
@@ -34,7 +33,6 @@ class Trainer(object):
         self.val_set_B = val_set_B
 
         print("[*] source: %s target: %s" % (self.train_set_A, self.train_set_B))
-
 
         self.batch_size = config.batch_size
         self.val_batch_size = config.val_batch_size
@@ -83,23 +81,29 @@ class Trainer(object):
         # load pre-trained VGG DeepFace model as encoder
         self.netE = vgg13()
 
-        self.netE.features = torch.nn.Sequential(collections.OrderedDict(zip(
+        self.netE.features = torch.nn.Sequential(
+            collections.OrderedDict(
+                zip(
             ['conv1_1', 'relu1_1', 'conv1_2', 'relu1_2', 'pool1', 'conv2_1', 'relu2_1', 'conv2_2', 'relu2_2', 'pool2',
              'conv3_1', 'relu3_1', 'conv3_2', 'relu3_2', 'conv3_3', 'relu3_3', 'pool3', 'conv4_1', 'relu4_1', 'conv4_2',
              'relu4_2', 'conv4_3', 'relu4_3', 'pool4', 'conv5_1', 'relu5_1', 'conv5_2', 'relu5_2', 'conv5_3', 'relu5_3',
-             'pool5'], self.netE.features)))
+             'pool5'], self.netE.features))
+            )
         self.netE.classifier = torch.nn.Sequential(collections.OrderedDict(
             zip(['fc6', 'relu6', 'drop6', 'fc7', 'relu7', 'drop7', 'fc8', 'prob'], self.netE.classifier)))
 
-        state_dict = h5py.File(self.config.netE_pretrained1, 'r')
-        torch.load(self.config.netE_pretrained2)
+        if self.config.netE != "":
+            print("[*] Loading trained Encoder's weight...")
+            state_dict = h5py.File(self.config.netE, 'r')
+            self.netE.load_state_dict(
+                {l: torch.from_numpy(np.array(v)).view_as(p) for k, v in state_dict.items() for l, p in
+                 self.netE.named_parameters() if k in l})
 
-        self.netE.load_state_dict(
-            {l: torch.from_numpy(np.array(v)).view_as(p) for k, v in state_dict.items() for l, p in
-             self.netE.named_parameters() if k in l})
-
-        self.netE = self.netE.to(device)
-        print("[*] Build Encoder model completed!")
+            self.netE = self.netE.to(device)
+            print("[*] Build Encoder model completed!")
+        else:
+            print("[*] Error! Provide trained encoder's weight path!")
+            return
 
         print("[*] Build Discriminator model...")
         self.netD = Discriminator(self.in_ch, self.out_ch, self.ndf).to(device)
@@ -119,27 +123,9 @@ class Trainer(object):
         self.netE.eval() # freeze encoder
         self.netD.train()
 
-    # def get_d_input_tensor(self, x):
-    #     t = T.Compose([T.ToPILImage(), T.Resize((self.image_size, self.image_size)), T.ToTensor()])
-    #     x = x.squeeze(0).cpu()
-    #     out = t(x).unsqueeze(0).to(device)
-    #     return out
-    #
-    # def get_e_input_tensor(self, x):
-    #     t = T.Compose([T.ToPILImage(), T.Resize((224, 224)), T.ToTensor()])
-    #     x = x.squeeze(0).cpu()
-    #     out = t(x).unsqueeze(0).to(device)
-    #     return out
-    #
-    # def get_resized_t_tensor(self, x_hat_target, x):
-    #
-    #     # print("input:",x.shape)
-    #     # print("target:", x_hat_target.shape)
-    #
-    #     t = T.Compose([T.ToPILImage(), T.Resize((x_hat_target.size(2), x_hat_target.size(2))), T.ToTensor()])
-    #     x = x.squeeze(0).cpu()
-    #     out = t(x).unsqueeze(0).to(device)
-    #     return out
+    def denorm(self, x):
+        out = (x + 1) / 2
+        return out.clamp(0, 1)
 
     def train(self):
         # setup visdom
@@ -151,10 +137,10 @@ class Trainer(object):
 
         # setup optimizers
         if self.rmsprop:
-            optimizer_D = optim.RMSprop(self.netD.parameters(), lr=self.lrD)
-            optimizer_G = optim.RMSprop(self.netG.paramaters(), lr=self.lrG)
+            optimizer_D = optim.SGD(self.netD.parameters(), lr=self.lrD)
+            optimizer_G = optim.RMSprop(self.netG.parameters(), lr=self.lrG)
         else:
-            optimizer_D = optim.Adam(self.netD.parameters(), lr=self.lrD, betas=(self.beta1, 0.999), weight_decay=self.wd)
+            optimizer_D = optim.SGD(self.netD.parameters(), lr=self.lrD)
             optimizer_G = optim.Adam(self.netG.parameters(), lr=self.lrG, betas=(self.beta1, 0.999), weight_decay=0.0)
 
         # setup input, output tensors
@@ -355,12 +341,11 @@ class Trainer(object):
                              target_idx+1, len(self.train_loader_B),
                              np.mean(lossG_list), np.mean(lossD_list)))
 
-                    vis.plot("[DTN]Generator loss per %d steps" % self.log_interval, np.mean(lossG_list))
-                    vis.plot("[DTN]Discriminator loss per %d steps" % self.log_interval, np.mean(lossD_list))
+                    vis.plot("[DTN_vggFace] G loss with lr=%.4f" % self.lrG, np.mean(lossG_list))
+                    vis.plot("[DTN_vggFace] D loss with lr=%.4f" % self.lrD, np.mean(lossD_list))
 
                     lossG_list.clear()
                     lossD_list.clear()
-
 
                 # generating images
                 if gan_iters % self.sample_interval == 0:
@@ -384,6 +369,8 @@ class Trainer(object):
                     vutils.save_image(val_batch_output, '%s/generated_epoch%04d_iter%08d.png'
                                         % (self.sample_folder, epoch+1, gan_iters), nrow=6, normalize=True)
                     print("[*] Saving sample images completed!")
+
+                    vis.img("[vggFace] Generated image", self.denorm(val_batch_output))
 
                 # do checkpointing
                 if gan_iters % self.ckpt_interval == 0:

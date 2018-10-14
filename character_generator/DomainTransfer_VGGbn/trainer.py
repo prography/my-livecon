@@ -103,27 +103,9 @@ class Trainer(object):
         self.netE.eval() # freeze encoder
         self.netD.train()
 
-    # def get_d_input_tensor(self, x):
-    #     t = T.Compose([T.ToPILImage(), T.Resize((self.image_size, self.image_size)), T.ToTensor()])
-    #     x = x.squeeze(0).cpu()
-    #     out = t(x).unsqueeze(0).to(device)
-    #     return out
-    #
-    # def get_e_input_tensor(self, x):
-    #     t = T.Compose([T.ToPILImage(), T.Resize((224, 224)), T.ToTensor()])
-    #     x = x.squeeze(0).cpu()
-    #     out = t(x).unsqueeze(0).to(device)
-    #     return out
-    #
-    # def get_resized_t_tensor(self, x_hat_target, x):
-    #
-    #     # print("input:",x.shape)
-    #     # print("target:", x_hat_target.shape)
-    #
-    #     t = T.Compose([T.ToPILImage(), T.Resize((x_hat_target.size(2), x_hat_target.size(2))), T.ToTensor()])
-    #     x = x.squeeze(0).cpu()
-    #     out = t(x).unsqueeze(0).to(device)
-    #     return out
+    def denorm(self, x):
+        out = (x + 1) / 2
+        return out.clamp(0, 1)
 
     def train(self):
         # setup visdom
@@ -345,8 +327,8 @@ class Trainer(object):
                              target_idx+1, len(self.train_loader_B),
                              np.mean(lossG_list), np.mean(lossD_list)))
 
-                    vis.plot("[DTN]Generator loss per %d steps" % self.log_interval, np.mean(lossG_list))
-                    vis.plot("[DTN]Discriminator loss per %d steps" % self.log_interval, np.mean(lossD_list))
+                    vis.plot("[DTN_vggBn] G loss with lr=%.4f" % self.lrG, np.mean(lossG_list))
+                    vis.plot("[DTN_vggBn] D loss with lr=%.4f" % self.lrD, np.mean(lossD_list))
 
                     lossG_list.clear()
                     lossD_list.clear()
@@ -372,6 +354,9 @@ class Trainer(object):
 
                     vutils.save_image(val_batch_output, '%s/generated_epoch%04d_iter%08d.png'
                                         % (self.sample_folder, epoch+1, gan_iters), nrow=6, normalize=True)
+
+                    vis.img("Generated image", self.denorm(val_batch_output))
+
                     print("[*] Saving sample images completed!")
 
                 # do checkpointing
