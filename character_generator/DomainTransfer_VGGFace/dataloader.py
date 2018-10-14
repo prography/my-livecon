@@ -13,7 +13,7 @@ def get_loader(dataset_name, dataroot, original_image_size, image_size, batch_si
 
     if transform_fn is None and (split == 'train' or split == 'extra'):
         transforms_list.extend([T.Resize((original_image_size, original_image_size)),
-                                  T.RandomCrop(image_size),
+                                  T.CenterCrop(image_size),
                                   T.ToTensor(),
                                   T.Normalize(mean, std)
                                 ])
