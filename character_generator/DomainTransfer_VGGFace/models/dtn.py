@@ -108,28 +108,28 @@ class Generator(nn.Module):
         # input is 7
         layer_idx += 1
         name = 'dlayer%d' % layer_idx
-        dlayer2 = blockUNet(ngf*16, ngf*8, name, transposed=True, bn=True, relu=True, dropout=False)
+        dlayer2 = blockUNet(ngf*16, ngf*8, name, transposed=True, bn=True, relu=False, dropout=False)
 
         # input is 14
         layer_idx += 1
         name = 'dlayer%d' % layer_idx
-        dlayer3 = blockUNet(ngf*8, ngf*4, name, transposed=True, bn=True, relu=True, dropout=False)
+        dlayer3 = blockUNet(ngf*8, ngf*4, name, transposed=True, bn=True, relu=False, dropout=False)
 
         # input 28
         layer_idx += 1
         name = 'dlayer%d' % layer_idx
-        dlayer4 = blockUNet(ngf*4, ngf*2, name, transposed=True, bn=True, relu=True, dropout=False)
+        dlayer4 = blockUNet(ngf*4, ngf*2, name, transposed=True, bn=True, relu=False, dropout=False)
 
         # input 56
         layer_idx += 1
         name = 'dlayer%d' % layer_idx
-        dlayer5 = blockUNet(ngf*2, ngf, name, transposed=True, bn=True, relu=True, dropout=False)
+        dlayer5 = blockUNet(ngf*2, ngf, name, transposed=True, bn=True, relu=False, dropout=False)
 
         # input 112
         layer_idx += 1
         name = 'dlayer%d' % layer_idx
         dlayer6 = nn.Sequential()
-        dlayer6.add_module('%s_relu' % name, nn.ReLU(inplace=True))
+        dlayer6.add_module('%s_relu' % name, nn.LeakyReLU(0.2, inplace=True))
         dlayer6.add_module('%s_tconv' % name, nn.ConvTranspose2d(ngf, out_ch, 4, 2, 1, bias=False))
         dlayer6.add_module('%s_tanh' % name, nn.Tanh())
 
