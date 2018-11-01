@@ -4,12 +4,13 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 import com.example.user.liv_icon.Network.HttpRequest;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ImageRequestTask extends AsyncTask<String, Integer, String> {
-
+    Gson gson = new Gson();
     private ImageRequestTaskHandler handler;
 
     public interface ImageRequestTaskHandler{
@@ -37,7 +38,8 @@ public class ImageRequestTask extends AsyncTask<String, Integer, String> {
         if(strings[2] != null){
             params.put("img",strings[2]);
         }
-        params.put("key",String.valueOf(System.currentTimeMillis()));
+        params.put("key",strings[3]);
+        params.put("style","pop");
 
         String result = null;
 

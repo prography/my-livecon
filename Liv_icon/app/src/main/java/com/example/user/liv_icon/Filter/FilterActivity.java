@@ -1,5 +1,6 @@
 package com.example.user.liv_icon.Filter;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,16 +11,28 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.user.liv_icon.R;
+import com.example.user.liv_icon.ResultActivity;
 import com.zomato.photofilters.geometry.Point;
 import com.zomato.photofilters.imageprocessors.Filter;
-import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubfilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ColorOverlaySubfilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubfilter;
-import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ToneCurveSubfilter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.concurrent.Future;
+
+import retrofit2.Response;
+
+import static com.example.user.liv_icon.MainActivity.getBase64String;
+
 
 public class FilterActivity extends AppCompatActivity {
     static
@@ -34,8 +47,8 @@ public class FilterActivity extends AppCompatActivity {
     SharedPreferences mPref;
     String img;
     Bitmap decodedBitmap;
-
-
+    Button upload;
+    String base_str;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +56,31 @@ public class FilterActivity extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.image);
         recyclerView = (RecyclerView)findViewById(R.id.list);
         filter_adapter = new Filter_adapter(this);
+        upload = (Button)findViewById(R.id.upload);
 
         setImage();
 
         imageView.setImageBitmap(decodedBitmap);
 
+
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                base_str = getBase64String(decodedBitmap);
+
+                SharedPreferences.Editor editor = mPref.edit();
+
+                editor.putString("img", base_str);
+
+                editor.putString("key",String.valueOf(System.currentTimeMillis()));
+
+                editor.commit();
+
+                Intent intent = new Intent(FilterActivity.this, ResultActivity.class);
+                startActivity(intent);
+            }
+        });
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -64,22 +97,23 @@ public class FilterActivity extends AppCompatActivity {
                 }
                 else if(position ==1){
                     setImage();
-                    ToneCurveSubfilter(decodedBitmap);
+
+                    decodedBitmap = ToneCurveSubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==2){
                     setImage();
-                    ContrastSubfilter(decodedBitmap);
+                    decodedBitmap = ContrastSubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==3){
                     setImage();
-                    BrightnessSubfilter(decodedBitmap);
+                    decodedBitmap = BrightnessSubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
                 else if(position ==4){
                     setImage();
-                    ColorOverlaySubfilter(decodedBitmap);
+                    decodedBitmap = ColorOverlaySubfilter(decodedBitmap);
                     imageView.setImageBitmap(decodedBitmap);
                 }
             }
@@ -89,40 +123,37 @@ public class FilterActivity extends AppCompatActivity {
             }
         }));
 
+
+        init();
+        img2  = ToneCurveSubfilter(img1);
+        init();
+        img3 = ContrastSubfilter(img1);
+        init();
+        img4 = BrightnessSubfilter(img1);
+        init();
+        img5 = ColorOverlaySubfilter(img1);
+        init();
+
+
+    }
+
+    public void init(){
         img1=  BitmapFactory.decodeResource(getResources(), R.drawable.dokyo);
         img1 =img1.copy(Bitmap.Config.ARGB_8888, true);
-
-        img2=  BitmapFactory.decodeResource(getResources(), R.drawable.dokyo);
-        img2 =img2.copy(Bitmap.Config.ARGB_8888, true);
-
-        img3=  BitmapFactory.decodeResource(getResources(), R.drawable.dokyo);
-        img3 =img3.copy(Bitmap.Config.ARGB_8888, true);
-
-        img4=  BitmapFactory.decodeResource(getResources(), R.drawable.dokyo);
-        img4 =img4.copy(Bitmap.Config.ARGB_8888, true);
-
-        img5=  BitmapFactory.decodeResource(getResources(), R.drawable.dokyo);
-        img5 =img5.copy(Bitmap.Config.ARGB_8888, true);
-
-        ToneCurveSubfilter(img2);
-        ContrastSubfilter(img3);
-        BrightnessSubfilter(img4);
-        ColorOverlaySubfilter(img5);
-
 
     }
 
 
     public void setImage(){
         mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String base_img = mPref.getString("img", "0");
+        String base_img = mPref.getString("image", "0");
 
         byte[] decodedByteArray = Base64.decode(base_img, Base64.NO_WRAP);
         decodedBitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
         decodedBitmap =decodedBitmap.copy(Bitmap.Config.ARGB_8888, true);
     }
 
-    public void ToneCurveSubfilter(Bitmap bitmap){
+    public Bitmap ToneCurveSubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
 
         Point[] rgbKnots;
@@ -133,29 +164,35 @@ public class FilterActivity extends AppCompatActivity {
 
         myFilter.addSubFilter(new ToneCurveSubfilter(rgbKnots, null, null, null));
         img2 = myFilter.processFilter(bitmap);
+        return img2;
 
     }
 
-    public void ColorOverlaySubfilter(Bitmap bitmap){
+    public Bitmap ColorOverlaySubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new ColorOverlaySubfilter(100, .5f, .2f, .5f));
         img5 = myFilter.processFilter(bitmap);
+        return img5;
 
     }
 
-    public void ContrastSubfilter(Bitmap bitmap){
+    public Bitmap ContrastSubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new ContrastSubfilter(2.2f));
         img3 = myFilter.processFilter(bitmap);
+        return img3;
 
     }
 
-    public void BrightnessSubfilter(Bitmap bitmap){
+    public Bitmap BrightnessSubfilter(Bitmap bitmap){
         Filter myFilter = new Filter();
         myFilter.addSubFilter(new ColorOverlaySubfilter(100, .3f, .6f, .6f));
         img4 = myFilter.processFilter(bitmap);
+        return img4;
 
     }
+
+
 
 
 }

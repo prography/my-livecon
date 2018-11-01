@@ -36,6 +36,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     private ImageButton inputImg;
     private boolean isSelectImage = false;
     SharedPreferences mPref;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +86,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         startActivityForResult(intent, PICK_ALBUM);
     }
 
-    public String getBase64String(Bitmap bitmap)
+    public static String getBase64String(Bitmap bitmap)
     {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -123,7 +125,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
                 SharedPreferences.Editor editor = mPref.edit();
 
-                editor.putString("img", base_img);
+                editor.putString("image", base_img);
 
                 editor.commit();
 
@@ -142,7 +144,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
                     SharedPreferences.Editor editor1 = mPref.edit();
 
-                    editor1.putString("img", base_img);
+                    editor1.putString("image", base_img);
 
                     editor1.commit();
 
