@@ -48,6 +48,7 @@ class Trainer(object):
         self.num_epochs = config.num_epochs
         self.lrG = config.lrG
         self.lrD = config.lrD
+        self.num_critics = config.num_critics
 
         self.beta_TID = config.betaTID
         self.alpha_CONST = config.alphaCONST
@@ -196,38 +197,8 @@ class Trainer(object):
             source_idx, target_idx = 0, 0
 
             while source_idx<len(source_iter) and target_idx<len(target_iter):
-                # SVHN --> MNIST
-                if self.config.datasetB == 'mnist':
-                    target_item_1c, _ = next(target_iter)
-                    source_item, source_label = next(source_iter)
-                    source_label -= 1
-
-                    target_item = torch.FloatTensor(target_item_1c.size(0),
-                                                   self.out_ch,
-                                                   target_item_1c.size(2),
-                                                   target_item_1c.size(3))
-
-                    target_item[:, 0, :, :].unsqueeze_(1).copy_(target_item_1c)
-                    target_item[:, 1, :, :].unsqueeze_(1).copy_(target_item_1c)
-                    target_item[:, 2, :, :].unsqueeze_(1).copy_(target_item_1c)
-
-                # MNIST --> SVHN
-                elif self.config.datasetA == 'mnist':
-                    target_item, _ = next(target_iter)
-                    source_item_1c, source_label = next(source_iter)
-                    source_item = torch.FloatTensor(source_item_1c.size(0),
-                                                    self.in_ch,
-                                                    source_item_1c.size(2),
-                                                    source_item_1c.size(3))
-
-                    source_item[:, 0, :, :].unsqueeze_(1).copy_(source_item_1c)
-                    source_item[:, 1, :, :].unsqueeze_(1).copy_(source_item_1c)
-                    source_item[:, 2, :, :].unsqueeze_(1).copy_(source_item_1c)
-
-                # our case
-                else:
-                    target_item, _ = next(target_iter)
-                    source_item, source_label = next(source_iter)
+                target_item, _ = next(target_iter)
+                source_item, source_label = next(source_iter)
 
                 trg_mini_batch = target_item.size(0)
                 src_mini_batch = source_item.size(0)
@@ -244,54 +215,61 @@ class Trainer(object):
                 target.data.resize_as_(target_item).copy_(target_item)
                 source.data.resize_as_(source_item).copy_(source_item)
 
-                #==========================================#
-                #        1. train the Discriminator        #
-                #==========================================#
-                for p in self.netD.parameters():
-                    p.requires_grad = True
+                if (gan_iters+1) % self.num_critics == 0:
+                    #==========================================#
+                    #        1. train the Discriminator        #
+                    #==========================================#
+                    for p in self.netD.parameters():
+                        p.requires_grad = True
 
-                self.netD.zero_grad()
+                    self.netD.zero_grad()
 
-                # compute error with real target
-                # real target label = 2
-                label_d.data.resize_(trg_mini_batch).fill_(real_target_label) # 1
-                outD_real_target = self.netD(target) # 1, 3
+                    # compute error with real target
+                    # real target label = 2
+                    label_d.data.resize_(trg_mini_batch).fill_(real_target_label) # 1
+                    outD_real_target = self.netD(target) # 1, 3
 
-                errD_real_target = criterion_CE(outD_real_target, label_d)
-                errD_real_target.backward()
+                    errD_real_target = criterion_CE(outD_real_target, label_d)
+                    errD_real_target.backward()
 
-                # compute error with fake target
-                _, h_target = self.netE(target)
+                    # compute error with fake target
+                    _, h_target = self.netE(target)
 
-                x_hat_target = self.netG(h_target)
-                fake_target = x_hat_target.detach()
+                    x_hat_target = self.netG(h_target)
+                    fake_target = x_hat_target.detach()
 
-                # fake target label = 1
-                label_d.data.resize_(trg_mini_batch).fill_(fake_target_label)
-                outD_fake_target = self.netD(fake_target)
-                errD_fake_target = criterion_CE(outD_fake_target, label_d)
-                errD_fake_target.backward()
+                    # fake target label = 1
+                    label_d.data.resize_(trg_mini_batch).fill_(fake_target_label)
+                    outD_fake_target = self.netD(fake_target)
+                    errD_fake_target = criterion_CE(outD_fake_target, label_d)
+                    errD_fake_target.backward()
 
-                # compute error with fake source
-                _, h_source = self.netE(source)
-                x_hat_source = self.netG(h_source)
-                fake_source = x_hat_source.detach()
+                    # compute error with fake source
+                    _, h_source = self.netE(source)
+                    x_hat_source = self.netG(h_source)
+                    fake_source = x_hat_source.detach()
 
-                # fake source label = 2
-                label_d.data.resize_(src_mini_batch).fill_(fake_source_label)
-                outD_fake_source = self.netD(fake_source)
-                errD_fake_source = criterion_CE(outD_fake_source, label_d)
-                errD_fake_source.backward()
+                    # fake source label = 2
+                    label_d.data.resize_(src_mini_batch).fill_(fake_source_label)
+                    outD_fake_source = self.netD(fake_source)
+                    errD_fake_source = criterion_CE(outD_fake_source, label_d)
+                    errD_fake_source.backward()
 
-                lossD = errD_real_target + errD_fake_target + errD_fake_source
-                lossD_list.append(lossD.item())
-                optimizer_D.step()
+                    lossD = errD_real_target + errD_fake_target + errD_fake_source
+                    lossD_list.append(lossD.item())
+                    optimizer_D.step()
 
                 # ==========================================#
                 #            2. train the Generator         #
                 # ==========================================#
                 for p in self.netD.parameters():
                     p.requires_grad = False
+
+                _, h_target = self.netE(target)
+                x_hat_target = self.netG(h_target)
+
+                _, h_source = self.netE(source)
+                x_hat_source = self.netG(h_source)
 
                 self.netG.zero_grad()
 
@@ -332,10 +310,9 @@ class Trainer(object):
                 lossG_list.append(lossG.item())
 
                 optimizer_G.step()
-                gan_iters += 1
 
                 # do logging
-                if gan_iters % self.log_interval == 0:
+                if (gan_iters+1) % self.log_interval == 0:
                     print("[%d/%d] [%d/%d] [%d/%d] G loss:%.3f D loss:%.3f"
                           % (epoch+1, self.num_epochs, source_idx+1, len(self.train_loader_A),
                              target_idx+1, len(self.train_loader_B),
@@ -348,7 +325,7 @@ class Trainer(object):
                     lossD_list.clear()
 
                 # generating images
-                if gan_iters % self.sample_interval == 0:
+                if (gan_iters+1) % self.sample_interval == 0:
                     val_batch_output = torch.FloatTensor(val_source.size(0),
                                                          self.in_ch,
                                                          val_source.size(2),
@@ -373,12 +350,14 @@ class Trainer(object):
                     vis.img("[vggFace] Generated image", self.denorm(val_batch_output))
 
                 # do checkpointing
-                if gan_iters % self.ckpt_interval == 0:
+                if (gan_iters+1) % self.ckpt_interval == 0:
                     torch.save(self.netG.state_dict(), "%s/netG_epoch%04d_iter%08d.pth"
                                % (self.ckpt_folder, epoch+1, gan_iters))
                     torch.save(self.netD.state_dict(), "%s/netD_epoch%04d_iter%08d.pth"
                                % (self.ckpt_folder, epoch + 1, gan_iters))
                     print("[*] Saving checkpoints completed!")
+
+                gan_iters += 1
 
         print("Learning finished!")
         torch.save(self.netG.state_dict(), "%s/final_netG.pth" % self.ckpt_folder)

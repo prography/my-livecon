@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 import random
+import matplotlib.pyplot as plt
 
 # initialize network layers' weight and bias
 def weights_init_normal(module):
@@ -55,3 +56,21 @@ class ReplayBuffer():
                     to_return.append(element)
 
         return torch.cat(to_return)
+
+# images: list of images
+# labels: list of labels
+def save_image(images, labels, outpath):
+    fig = plt.figure()
+
+    for i, d in enumerate(images):
+        d = d.squeeze()
+        im = d.data.cpu().numpy()
+        im = (im.transpose(1, 2, 0) + 1) / 2
+
+        f = fig.add_subplot(2, 3, i + 1)
+        f.imshow(im)
+        f.set_title(labels[i])
+        f.set_xticks([])
+        f.set_yticks([])
+
+    plt.savefig(outpath)

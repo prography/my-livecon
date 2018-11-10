@@ -59,8 +59,8 @@ def main(config):
 
     val_loader_A, val_set_A = get_loader(config.datasetA, config.valDatarootA,
                                        config.original_image_size, config.image_size,
-                                       config.val_batch_size, config.workers, split='test',
-                                         transform_fn=google_cartoon_tns)
+                                       config.val_batch_size, config.workers, split='test')
+                                         # transform_fn=google_cartoon_tns)
 
     train_loader_B, train_set_B = get_loader(config.datasetB, config.datarootB,
                                             config.original_image_size, config.image_size,
@@ -68,8 +68,8 @@ def main(config):
 
     val_loader_B, val_set_B = get_loader(config.datasetB, config.valDatarootB,
                                          config.original_image_size, config.image_size,
-                                         config.val_batch_size, config.workers, split='test',
-                                         transform_fn=google_cartoon_tns)
+                                         config.val_batch_size, config.workers, split='test')
+                                         # transform_fn=google_cartoon_tns)
 
     print("[*] Prepare dataloader completed!!!")
 

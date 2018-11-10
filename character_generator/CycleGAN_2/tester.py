@@ -1,9 +1,6 @@
 import torch
-import torchvision.utils as vutils
 
 import os
-import cv2
-import numpy as np
 import matplotlib.pyplot as plt
 
 from model import Generator
@@ -68,6 +65,7 @@ class Tester(object):
 
 
     def test(self, testnum):
+        self.netG_AB.eval()
         if not os.path.exists(self.test_result_folder):
             os.makedirs(self.test_result_folder)
 
@@ -91,8 +89,9 @@ class Tester(object):
 if __name__ == "__main__":
     config = get_config()
 
-    
+    if device == torch.device('cpu'):
+        config.datarootA = r"D:\Deep_learning\Data\livecon\dataset_cropped\train\A\origin"
 
     tester = Tester(config)
-    tester.test(testnum=5)
+    tester.test(testnum=10)
 

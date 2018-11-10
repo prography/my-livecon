@@ -1,11 +1,10 @@
 import itertools
 import numpy as np
 
-import time
+import time, os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision.utils as vutils
 
 from model import Generator, Discriminator
 import utils
@@ -74,9 +73,9 @@ class Trainer(object):
         self.netD_A = netD_A.to(device)
         self.netD_B = netD_B.to(device)
 
-    def sample_images(self, epoch, images):
-        for image_name, image in images.items():
-            vutils.save_image(denorm(image), "%s/epoch%d_%s.png" % (self.sample_folder, epoch, image_name))
+    # def sample_images(self, epoch, images):
+    #     for image_name, image in images.items():
+    #         vutils.save_image(denorm(image), "%s/epoch%d_%s.png" % (self.sample_folder, epoch, image_name))
 
     def train(self):
         vis = Visualizer()
@@ -119,7 +118,7 @@ class Trainer(object):
                 real_B = data['B'].to(device)
 
                 # skip if image has 1 channel
-                if real_A.size(1) != 3 or real_B.size(1) != 3:
+                if real_A.size(1) == 1 or real_B.size(1) == 1:
                     continue
 
                 step_batch = real_A.size(0)
@@ -239,16 +238,20 @@ class Trainer(object):
                     avg_loss_G_identity.clear()
 
                 if (step+1) % self.sample_interval == 0:
-                    images = {"real_A": real_A, "real_B": real_B, "fake_A": fake_A, "fake_B": fake_B}
-                    self.sample_images(epoch, images)
-                    print("Sample images saved!")
+                    # images = {"real_A": real_A, "real_B": real_B, "fake_A": fake_A, "fake_B": fake_B}
+                    # self.sample_images(epoch, images)
+                    # print("Sample images saved!")
+                    images = [real_A, fake_B, real_B, fake_A]
+                    labels = ['real A', 'fake B', 'real B', 'fake A']
+                    outpath = os.path.join(self.sample_folder, "sample_epoch{}.png".format(epoch))
+                    utils.save_image(images, labels, outpath)
 
                 if (step+1) % self.ckpt_interval == 0:
-                    torch.save(self.netG_A2B.state_dict(), "%s/netG_A2B_epoch%d.pth" % (self.ckpt_folder, epoch))
-                    torch.save(self.netG_B2A.state_dict(), "%s/netG_B2A_epoch%d.pth" % (self.ckpt_folder, epoch))
-                    torch.save(self.netD_A.state_dict(), "%s/netD_A_epoch%d.pth" % (self.ckpt_folder, epoch))
-                    torch.save(self.netD_B.state_dict(), "%s/netD_B_epoch%d.pth" % (self.ckpt_folder, epoch))
-                    print("Checkpoints saved!")
+                    torch.save(self.netG_A2B.state_dict(), os.path.join(self.ckpt_folder, "netG_A2B_epoch{}.pth".format(epoch)))
+                    torch.save(self.netG_B2A.state_dict(), os.path.join(self.ckpt_folder, "netG_B2A_epoch{}.pth".format(epoch)))
+                    torch.save(self.netD_A.state_dict(), os.path.join(self.ckpt_folder, "netD_A_epoch{}.pth".format(epoch)))
+                    torch.save(self.netD_B.state_dict(), os.path.join(self.ckpt_folder, "netD_B_epoch{}.pth".format(epoch)))
+                    print("[*] Checkpoints saved!")
 
             lr_scheduler_G.step()
             lr_scheduler_D_A.step()
